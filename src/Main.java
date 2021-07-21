@@ -26,9 +26,8 @@ public class Main {
         System.out.println(polish);
 
         // calculate
-
-        // output
-        System.out.println(inputString);
+        Calculator calculator = new Calculator();
+        System.out.println(calculator.calculate(inputString, priority));
 
         scanner.close();
     }
