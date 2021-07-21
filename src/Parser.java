@@ -8,7 +8,7 @@ import java.util.Map;
 public class Parser {
     public List<String> tokenize(String str) {
         // 記号の前後にスペースを入れ，連続するスペースを一つにし，分割する
-        String[] tokens = str.replaceAll("(\\W)", " $1 ").replaceAll("\\s+", " ").split("\\s");
+        String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ").replaceAll("\\s+", " ").split("\\s");
         List<String> list = new ArrayList<>(Arrays.asList(tokens));
         list.add("END"); // 終わりを示す END トークンを追加しておく
         return list;
