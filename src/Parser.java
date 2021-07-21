@@ -29,7 +29,7 @@ public class Parser {
             }
 
             // トークンが数字の場合
-            if (token.matches("\\d+")) {
+            if (token.matches("\\d+(\\.\\d+)?")) {
                 // キューにそのまま入れる
                 reversePolishQueue.offerLast(token);
                 continue;
