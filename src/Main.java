@@ -26,7 +26,7 @@ public class Main {
 
         // calculate
         Calculator calculator = new Calculator();
-        System.out.println(calculator.calculate(polish, priority));
+        System.out.println(calculator.calculate(polish));
 
         scanner.close();
     }

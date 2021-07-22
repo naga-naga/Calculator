@@ -1,9 +1,8 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
 
 public class Calculator {
-    public double calculate(Deque<String> reversePolishQueue, Map<String, Integer> priority) {
+    public double calculate(Deque<String> reversePolishQueue) {
         Deque<String> numberStack = new ArrayDeque<>();
 
         while (!reversePolishQueue.isEmpty()) {
