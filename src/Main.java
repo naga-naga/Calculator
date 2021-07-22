@@ -18,10 +18,10 @@ public class Main {
 
         // parse
         Parser parser = new Parser();
-        Deque<String> token = parser.tokenize(inputString);
-        System.out.println(token);
+        Deque<String> tokens = parser.tokenize(inputString);
+        System.out.println(tokens);
 
-        Deque<String> polish = parser.parse(token, priority);
+        Deque<String> polish = parser.parse(tokens, priority);
         System.out.println(polish);
 
         // calculate
