@@ -21,12 +21,12 @@ public class Main {
         Deque<String> token = parser.tokenize(inputString);
         System.out.println(token);
 
-        Deque<String> polish = parser.parse(inputString, priority);
+        Deque<String> polish = parser.parse(token, priority);
         System.out.println(polish);
 
         // calculate
         Calculator calculator = new Calculator();
-        System.out.println(calculator.calculate(inputString, priority));
+        System.out.println(calculator.calculate(polish, priority));
 
         scanner.close();
     }

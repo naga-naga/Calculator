@@ -3,9 +3,7 @@ import java.util.Deque;
 import java.util.Map;
 
 public class Calculator {
-    public double calculate(String expressionString, Map<String, Integer> priority) {
-        Parser parser = new Parser();
-        Deque<String> reversePolishQueue = parser.parse(expressionString, priority);
+    public double calculate(Deque<String> reversePolishQueue, Map<String, Integer> priority) {
         Deque<String> numberStack = new ArrayDeque<>();
 
         while (!reversePolishQueue.isEmpty()) {

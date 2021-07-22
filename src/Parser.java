@@ -14,10 +14,9 @@ public class Parser {
         return retDeque;
     }
 
-    public Deque<String> parse(String expressionString, Map<String, Integer> priority) {
+    public Deque<String> parse(Deque<String> tokens, Map<String, Integer> priority) {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<String> operatorStack = new ArrayDeque<>();
-        Deque<String> tokens = tokenize(expressionString);
 
         for (String token : tokens) {
             // 最後のトークンの場合
