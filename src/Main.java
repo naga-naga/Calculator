@@ -1,6 +1,5 @@
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -19,7 +18,7 @@ public class Main {
 
         // parse
         Parser parser = new Parser();
-        List<String> token = parser.tokenize(inputString);
+        Deque<String> token = parser.tokenize(inputString);
         System.out.println(token);
 
         Deque<String> polish = parser.parse(inputString, priority);

@@ -1,23 +1,23 @@
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
-import java.util.List;
 import java.util.Map;
 
 public class Parser {
-    public List<String> tokenize(String str) {
+    public Deque<String> tokenize(String str) {
         // 記号の前後にスペースを入れ，連続するスペースを一つにし，分割する
         String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ").replaceAll("\\s+", " ").split("\\s");
-        List<String> list = new ArrayList<>(Arrays.asList(tokens));
-        list.add("END"); // 終わりを示す END トークンを追加しておく
-        return list;
+        Deque<String> retDeque = new ArrayDeque<>();
+        for (String token : tokens) {
+            retDeque.offerLast(token);
+        }
+        retDeque.offerLast("END"); // 終わりを示す END トークンを追加しておく
+        return retDeque;
     }
 
     public Deque<String> parse(String expressionString, Map<String, Integer> priority) {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<String> operatorStack = new ArrayDeque<>();
-        List<String> tokens = tokenize(expressionString);
+        Deque<String> tokens = tokenize(expressionString);
 
         for (String token : tokens) {
             // 最後のトークンの場合
