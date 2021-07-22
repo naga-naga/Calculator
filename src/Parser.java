@@ -14,11 +14,13 @@ public class Parser {
         return retDeque;
     }
 
-    public Deque<String> parse(Deque<String> tokens, Map<String, Integer> priority) {
+    public Deque<String> parse(Deque<String> tokensQueue, Map<String, Integer> priority) {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<String> operatorStack = new ArrayDeque<>();
 
-        for (String token : tokens) {
+        while (!tokensQueue.isEmpty()) {
+            String token = tokensQueue.pollFirst();
+
             // 最後のトークンの場合
             if (token.matches("END")) {
                 // 演算子スタックに残っている演算子をキューに出す
@@ -32,6 +34,25 @@ public class Parser {
                 // キューにそのまま入れる
                 reversePolishQueue.offerLast(token);
                 continue;
+            }
+
+            // トークンが開き括弧の場合
+            if (token.matches("\\(")) {
+                // 括弧内を再帰的にパースする
+                Deque<String> partialReversePolishQueue = parse(tokensQueue, priority);
+                while (!partialReversePolishQueue.isEmpty()) {
+                    reversePolishQueue.offerLast(partialReversePolishQueue.pollFirst());
+                }
+                continue;
+            }
+
+            // トークンが閉じ括弧の場合
+            if (token.matches("\\)")) {
+                // 演算子スタックに残っている演算子をキューに出す
+                while (!operatorStack.isEmpty()) {
+                    reversePolishQueue.offerLast(operatorStack.pollFirst());
+                }
+                return reversePolishQueue;
             }
 
             // トークンが演算子の場合
