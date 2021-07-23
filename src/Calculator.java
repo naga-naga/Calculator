@@ -16,7 +16,8 @@ public class Calculator {
             }
 
             // そうでない場合，演算子に応じた処理をする
-            operators.get(token).getOperator().process(numberStack);
+            double result = operators.get(token).getOperator().process(numberStack);
+            numberStack.offerFirst(String.valueOf(result));
         }
 
         return Double.parseDouble(numberStack.pollFirst());
