@@ -6,11 +6,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         // define operator
-        Map<String, Integer> priority = new HashMap<>();
-        priority.put("+", 10);
-        priority.put("-", 10);
-        priority.put("*", 20);
-        priority.put("/", 20);
+        Map<String, OperatorAttribute> operators = new HashMap<>();
+        operators.put("+", new OperatorAttribute(10, new Add()));
+        operators.put("-", new OperatorAttribute(10, new Subtract()));
+        operators.put("*", new OperatorAttribute(20, new Multiply()));
+        operators.put("/", new OperatorAttribute(20, new Divide()));
 
         // input
         Scanner scanner = new Scanner(System.in);
@@ -21,12 +21,12 @@ public class Main {
         Deque<String> tokens = parser.tokenize(inputString);
         System.out.println(tokens);
 
-        Deque<String> polish = parser.parse(tokens, priority);
+        Deque<String> polish = parser.parse(tokens, operators);
         System.out.println(polish);
 
         // calculate
         Calculator calculator = new Calculator();
-        System.out.println(calculator.calculate(polish));
+        System.out.println(calculator.calculate(polish, operators));
 
         scanner.close();
     }
