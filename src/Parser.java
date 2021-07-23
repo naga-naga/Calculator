@@ -4,9 +4,13 @@ import java.util.Map;
 
 public class Parser {
     public Deque<String> tokenize(String str) {
-        // 記号の前後にスペースを入れ，連続するスペースを一つにし，分割する
-        String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ").replaceAll("\\s+", " ").split("\\s");
+        // 記号の前後にスペースを入れ，連続するスペースを一つにし，始めのスペースを消し，分割する
+        String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ")
+                .replaceAll("\\s+", " ")
+                .replaceAll("^\\s+", "")
+                .split("\\s");
         Deque<String> retDeque = new ArrayDeque<>();
+
         for (String token : tokens) {
             retDeque.offerLast(token);
         }
