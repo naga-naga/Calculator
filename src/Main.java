@@ -11,6 +11,7 @@ public class Main {
         operators.put("-", new OperatorAttribute(10, new Subtract()));
         operators.put("*", new OperatorAttribute(20, new Multiply()));
         operators.put("/", new OperatorAttribute(20, new Divide()));
+        operators.put("sin", new OperatorAttribute(30, new Sin()));
 
         // input
         Scanner scanner = new Scanner(System.in);
