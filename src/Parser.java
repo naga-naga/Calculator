@@ -18,7 +18,7 @@ public class Parser {
         return retDeque;
     }
 
-    public Deque<String> parse(Deque<String> tokensQueue, Map<String, OperatorAttribute> operators) {
+    public Deque<String> parse(Deque<String> tokensQueue, Map<String, OperatorAttribute> operators) throws OperatorUndefinedExeption {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<String> operatorStack = new ArrayDeque<>();
 
@@ -68,11 +68,15 @@ public class Parser {
 
             // 演算子スタックが空でない場合
             // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
-            if (operators.get(token).getPriority() > operators.get(operatorStack.peekFirst()).getPriority()) {
-                operatorStack.offerFirst(token);
-            } else { // そうでない場合はスタックの演算子をキューに出し，現在のトークンをスタックに積む
-                reversePolishQueue.offerLast(operatorStack.pollFirst());
-                operatorStack.offerFirst(token);
+            try {
+                if (operators.get(token).getPriority() > operators.get(operatorStack.peekFirst()).getPriority()) {
+                    operatorStack.offerFirst(token);
+                } else { // そうでない場合はスタックの演算子をキューに出し，現在のトークンをスタックに積む
+                    reversePolishQueue.offerLast(operatorStack.pollFirst());
+                    operatorStack.offerFirst(token);
+                }
+            } catch (NullPointerException e) {
+                throw new OperatorUndefinedExeption(token);
             }
         }
 

@@ -3,7 +3,7 @@ import java.util.Deque;
 import java.util.Map;
 
 public class Calculator {
-    public double calculate(Deque<String> reversePolishQueue, Map<String, OperatorAttribute> operators) {
+    public double calculate(Deque<String> reversePolishQueue, Map<String, OperatorAttribute> operators) throws OperatorUndefinedExeption {
         Deque<String> numberStack = new ArrayDeque<>();
 
         while (!reversePolishQueue.isEmpty()) {
@@ -15,9 +15,13 @@ public class Calculator {
                 continue;
             }
 
-            // そうでない場合，演算子に応じた処理をする
-            double result = operators.get(token).getOperator().process(numberStack);
-            numberStack.offerFirst(String.valueOf(result));
+            try {
+                // そうでない場合，演算子に応じた処理をする
+                double result = operators.get(token).getOperator().process(numberStack);
+                numberStack.offerFirst(String.valueOf(result));
+            } catch (NullPointerException e) {
+                throw new OperatorUndefinedExeption(token);
+            }
         }
 
         return Double.parseDouble(numberStack.pollFirst());

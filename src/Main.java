@@ -28,8 +28,14 @@ public class Main {
             }
 
             Deque<String> tokens = parser.tokenize(inputString);
-            Deque<String> polish = parser.parse(tokens, operators);
-            System.out.println(calculator.calculate(polish, operators));
+
+            try {
+                Deque<String> polish = parser.parse(tokens, operators);
+                System.out.println(calculator.calculate(polish, operators));
+            } catch (OperatorUndefinedExeption e) {
+                System.out.println(e.getMessage());
+                continue;
+            }
         }
 
         scanner.close();
