@@ -7,11 +7,11 @@ public class Main {
     public static void main(String[] args) {
         // define operator
         Map<String, OperatorAttribute> operators = new HashMap<>();
-        operators.put("+", new OperatorAttribute(10, new Add()));
-        operators.put("-", new OperatorAttribute(10, new Subtract()));
-        operators.put("*", new OperatorAttribute(20, new Multiply()));
-        operators.put("/", new OperatorAttribute(20, new Divide()));
-        operators.put("sin", new OperatorAttribute(30, new Sin()));
+        operators.put("+", new OperatorAttribute(10, new Add(), 2));
+        operators.put("-", new OperatorAttribute(10, new Subtract(), 2));
+        operators.put("*", new OperatorAttribute(20, new Multiply(), 2));
+        operators.put("/", new OperatorAttribute(20, new Divide(), 2));
+        operators.put("sin", new OperatorAttribute(30, new Sin(), 1));
 
         Scanner scanner = new Scanner(System.in);
         Parser parser = new Parser();
@@ -32,7 +32,7 @@ public class Main {
             try {
                 Deque<String> polish = parser.parse(tokens, operators);
                 System.out.println(calculator.calculate(polish, operators));
-            } catch (OperatorUndefinedExeption e) {
+            } catch (OperatorUndefinedExeption | InvalidExpressionException e) {
                 System.out.println(e.getMessage());
                 continue;
             }
