@@ -13,21 +13,24 @@ public class Main {
         operators.put("/", new OperatorAttribute(20, new Divide()));
         operators.put("sin", new OperatorAttribute(30, new Sin()));
 
-        // input
         Scanner scanner = new Scanner(System.in);
-        String inputString = scanner.nextLine();
-
-        // parse
         Parser parser = new Parser();
-        Deque<String> tokens = parser.tokenize(inputString);
-        System.out.println(tokens);
-
-        Deque<String> polish = parser.parse(tokens, operators);
-        System.out.println(polish);
-
-        // calculate
         Calculator calculator = new Calculator();
-        System.out.println(calculator.calculate(polish, operators));
+
+        System.out.println("終了する場合は exit と入力してください");
+
+        while (true) {
+            System.out.print(">>> ");
+            String inputString = scanner.nextLine();
+
+            if (inputString.equals("exit")) {
+                break;
+            }
+
+            Deque<String> tokens = parser.tokenize(inputString);
+            Deque<String> polish = parser.parse(tokens, operators);
+            System.out.println(calculator.calculate(polish, operators));
+        }
 
         scanner.close();
     }
