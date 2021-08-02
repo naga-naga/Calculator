@@ -14,8 +14,8 @@ public class Main {
         operators.put("sin", new OperatorAttribute(30, new Sin(), 1));
 
         Scanner scanner = new Scanner(System.in);
-        Parser parser = new Parser();
-        Calculator calculator = new Calculator();
+        Parser parser = new Parser(operators);
+        Calculator calculator = new Calculator(operators);
 
         System.out.println("終了する場合は exit と入力してください");
 
@@ -30,8 +30,8 @@ public class Main {
             Deque<String> tokens = parser.tokenize(inputString);
 
             try {
-                Deque<String> polish = parser.parse(tokens, operators);
-                System.out.println(calculator.calculate(polish, operators));
+                Deque<String> polish = parser.parse(tokens);
+                System.out.println(calculator.calculate(polish));
             } catch (OperatorUndefinedExeption | InvalidExpressionException e) {
                 System.out.println(e.getMessage());
                 continue;

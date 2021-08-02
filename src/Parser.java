@@ -4,6 +4,15 @@ import java.util.Map;
 
 public class Parser {
     /**
+     * 演算子を定義した Map
+     */
+    private Map<String, OperatorAttribute> operators;
+
+    public Parser(Map<String, OperatorAttribute> operators) {
+        this.operators = operators;
+    }
+
+    /**
      * 与えられた文字列をトークン化して返す
      * @param str 計算式の文字列
      * @return トークンを要素とするキュー
@@ -26,11 +35,10 @@ public class Parser {
     /**
      * トークン列を構文解析し，逆ポーランド記法のキューを返す
      * @param tokensQueue トークン列のキュー
-     * @param operators 演算子を定義した Map
      * @return 逆ポーランド記法のキュー
      * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
      */
-    public Deque<String> parse(Deque<String> tokensQueue, Map<String, OperatorAttribute> operators) throws OperatorUndefinedExeption {
+    public Deque<String> parse(Deque<String> tokensQueue) throws OperatorUndefinedExeption {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<String> operatorStack = new ArrayDeque<>();
 
@@ -55,7 +63,7 @@ public class Parser {
             // トークンが開き括弧の場合
             if (token.matches("\\(")) {
                 // 括弧内を再帰的にパースする
-                Deque<String> partialReversePolishQueue = parse(tokensQueue, operators);
+                Deque<String> partialReversePolishQueue = parse(tokensQueue);
                 while (!partialReversePolishQueue.isEmpty()) {
                     reversePolishQueue.offerLast(partialReversePolishQueue.pollFirst());
                 }
@@ -81,7 +89,7 @@ public class Parser {
             // 演算子スタックが空でない場合
             // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
             try {
-                if (operators.get(token).getPriority() > operators.get(operatorStack.peekFirst()).getPriority()) {
+                if (this.operators.get(token).getPriority() > this.operators.get(operatorStack.peekFirst()).getPriority()) {
                     operatorStack.offerFirst(token);
                 } else { // そうでない場合はスタックの演算子をキューに出し，現在のトークンをスタックに積む
                     reversePolishQueue.offerLast(operatorStack.pollFirst());
