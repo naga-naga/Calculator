@@ -22,6 +22,7 @@ public class Calculator {
      */
     public double calculate(Deque<String> reversePolishQueue) throws OperatorUndefinedExeption, InvalidExpressionException {
         Deque<String> numberStack = new ArrayDeque<>();
+        double ret_value;
 
         while (!reversePolishQueue.isEmpty()) {
             String token = reversePolishQueue.pollFirst();
@@ -51,6 +52,12 @@ public class Calculator {
             }
         }
 
-        return Double.parseDouble(numberStack.pollFirst());
+        try {
+            ret_value = Double.parseDouble(numberStack.removeFirst());
+        } catch (NoSuchElementException e) {
+            throw new InvalidExpressionException();
+        }
+
+        return ret_value;
     }
 }
