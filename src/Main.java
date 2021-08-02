@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // define operator
+        // 演算子の定義
         Map<String, OperatorAttribute> operators = new HashMap<>();
         operators.put("+", new OperatorAttribute(10, new Add(), 2));
         operators.put("-", new OperatorAttribute(10, new Subtract(), 2));

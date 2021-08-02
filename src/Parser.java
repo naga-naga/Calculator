@@ -3,6 +3,11 @@ import java.util.Deque;
 import java.util.Map;
 
 public class Parser {
+    /**
+     * 与えられた文字列をトークン化して返す
+     * @param str 計算式の文字列
+     * @return トークンを要素とするキュー
+     */
     public Deque<String> tokenize(String str) {
         // 記号の前後にスペースを入れ，連続するスペースを一つにし，始めのスペースを消し，分割する
         String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ")
@@ -18,6 +23,13 @@ public class Parser {
         return retDeque;
     }
 
+    /**
+     * トークン列を構文解析し，逆ポーランド記法のキューを返す
+     * @param tokensQueue トークン列のキュー
+     * @param operators 演算子を定義した Map
+     * @return 逆ポーランド記法のキュー
+     * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
+     */
     public Deque<String> parse(Deque<String> tokensQueue, Map<String, OperatorAttribute> operators) throws OperatorUndefinedExeption {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<String> operatorStack = new ArrayDeque<>();

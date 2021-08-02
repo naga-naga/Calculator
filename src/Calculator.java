@@ -4,6 +4,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Calculator {
+    /**
+     * 逆ポーランド記法のキューをもとに計算を実行し，結果を返す
+     * @param reversePolishQueue 逆ポーランド記法のキュー
+     * @param operators 演算子を定義した Map
+     * @return 計算結果
+     * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
+     * @throws InvalidExpressionException 計算式が不正な場合
+     */
     public double calculate(Deque<String> reversePolishQueue, Map<String, OperatorAttribute> operators) throws OperatorUndefinedExeption, InvalidExpressionException {
         Deque<String> numberStack = new ArrayDeque<>();
 
