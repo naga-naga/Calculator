@@ -14,6 +14,7 @@ public class Parser {
 
     /**
      * 与えられた文字列をトークン化して返す
+     *
      * @param str 計算式の文字列
      * @return トークンを要素とするキュー
      */
@@ -34,6 +35,7 @@ public class Parser {
 
     /**
      * トークン列を構文解析し，逆ポーランド記法のキューを返す
+     *
      * @param tokensQueue トークン列のキュー
      * @return 逆ポーランド記法のキュー
      * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
@@ -89,7 +91,10 @@ public class Parser {
             // 演算子スタックが空でない場合
             // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
             try {
-                if (this.operators.get(token).getPriority() > this.operators.get(operatorStack.peekFirst()).getPriority()) {
+                int currentPriority = this.operators.get(token).getPriority();
+                int stackPriority = this.operators.get(operatorStack.peekFirst()).getPriority();
+
+                if (currentPriority > stackPriority) {
                     operatorStack.offerFirst(token);
                 } else { // そうでない場合はスタックの演算子をキューに出し，現在のトークンをスタックに積む
                     reversePolishQueue.offerLast(operatorStack.pollFirst());

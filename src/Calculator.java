@@ -15,14 +15,15 @@ public class Calculator {
 
     /**
      * 逆ポーランド記法のキューをもとに計算を実行し，結果を返す
+     *
      * @param reversePolishQueue 逆ポーランド記法のキュー
      * @return 計算結果
-     * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
+     * @throws OperatorUndefinedExeption  演算子として定義されていないトークンが渡された場合
      * @throws InvalidExpressionException 計算式が不正な場合
      */
     public double calculate(Deque<String> reversePolishQueue) throws OperatorUndefinedExeption, InvalidExpressionException {
         Deque<String> numberStack = new ArrayDeque<>();
-        double ret_value;
+        double calculationResult;
 
         while (!reversePolishQueue.isEmpty()) {
             String token = reversePolishQueue.pollFirst();
@@ -38,13 +39,14 @@ public class Calculator {
             try {
                 // 計算に必要な分だけスタックからオペランドを取り出す
                 int numberOfOperands = this.operators.get(token).getNumberOfOperands();
-                for(int i = 0; i < numberOfOperands; i++){
+                for (int i = 0; i < numberOfOperands; i++) {
                     // 左側のオペランドが Deque の左側に来るようにする
                     operands.offerFirst(Double.parseDouble(numberStack.removeFirst()));
                 }
 
-                double result = this.operators.get(token).getOperator().process(operands.toArray(new Double[numberOfOperands]));
-                numberStack.offerFirst(String.valueOf(result));
+                double processingResult = this.operators.get(token).getOperator()
+                        .process(operands.toArray(new Double[numberOfOperands]));
+                numberStack.offerFirst(String.valueOf(processingResult));
             } catch (NullPointerException e) {
                 throw new OperatorUndefinedExeption(token);
             } catch (NoSuchElementException e) {
@@ -53,11 +55,11 @@ public class Calculator {
         }
 
         try {
-            ret_value = Double.parseDouble(numberStack.removeFirst());
+            calculationResult = Double.parseDouble(numberStack.removeFirst());
         } catch (NoSuchElementException e) {
             throw new InvalidExpressionException();
         }
 
-        return ret_value;
+        return calculationResult;
     }
 }
