@@ -7,9 +7,9 @@ public class Calculator {
     /**
      * 演算子を定義した Map
      */
-    private Map<String, OperatorAttribute> operators;
+    private Map<String, Operator> operators;
 
-    public Calculator(Map<String, OperatorAttribute> operators) {
+    public Calculator(Map<String, Operator> operators) {
         this.operators = operators;
     }
 
@@ -37,6 +37,7 @@ public class Calculator {
 
             // そうでない場合，演算子に応じた処理をする
             try {
+                // TODO: nullチェック．try-catch をなるべく減らす
                 // 計算に必要な分だけスタックからオペランドを取り出す
                 int numberOfOperands = this.operators.get(token).getNumberOfOperands();
                 for (int i = 0; i < numberOfOperands; i++) {
@@ -44,8 +45,7 @@ public class Calculator {
                     operands.offerFirst(Double.parseDouble(numberStack.removeFirst()));
                 }
 
-                double processingResult = this.operators.get(token).getOperator()
-                        .process(operands.toArray(new Double[numberOfOperands]));
+                double processingResult = this.operators.get(token).process(operands.toArray(new Double[numberOfOperands]));
                 numberStack.offerFirst(String.valueOf(processingResult));
             } catch (NullPointerException e) {
                 throw new OperatorUndefinedExeption(token);

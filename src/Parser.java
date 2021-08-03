@@ -6,9 +6,9 @@ public class Parser {
     /**
      * 演算子を定義した Map
      */
-    private Map<String, OperatorAttribute> operators;
+    private Map<String, Operator> operators;
 
-    public Parser(Map<String, OperatorAttribute> operators) {
+    public Parser(Map<String, Operator> operators) {
         this.operators = operators;
     }
 
@@ -19,6 +19,7 @@ public class Parser {
      * @return トークンを要素とするキュー
      */
     public Deque<String> tokenize(String str) {
+        // TODO: ちゃんと字句解析する．Token クラスとか作ってトークンの情報を持たせる
         // 記号の前後にスペースを入れ，連続するスペースを一つにし，始めのスペースを消し，分割する
         String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ")
                 .replaceAll("\\s+", " ")
@@ -91,6 +92,7 @@ public class Parser {
             // 演算子スタックが空でない場合
             // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
             try {
+                // TODO: nullチェック．try-catch はなるべく減らす
                 int currentPriority = this.operators.get(token).getPriority();
                 int stackPriority = this.operators.get(operatorStack.peekFirst()).getPriority();
 
