@@ -15,12 +15,7 @@ public class Main {
                 break;
             }
 
-            try {
-                System.out.println(calculator.calculate(inputString));
-            } catch (OperatorUndefinedExeption | InvalidExpressionException e) {
-                System.out.println(e.getMessage());
-                continue;
-            }
+            System.out.println(calculator.calculate(inputString));
         }
 
         scanner.close();
