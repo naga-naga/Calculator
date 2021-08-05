@@ -18,19 +18,30 @@ public class Parser {
      * @param str 計算式の文字列
      * @return トークンを要素とするキュー
      */
-    public Deque<String> tokenize(String str) {
-        // TODO: ちゃんと字句解析する．Token クラスとか作ってトークンの情報を持たせる
+    public Deque<Token> tokenize(String str) {
         // 記号の前後にスペースを入れ，連続するスペースを一つにし，始めのスペースを消し，分割する
         String[] tokens = str.replaceAll("([^a-zA-Z0-9.])", " $1 ")
                 .replaceAll("\\s+", " ")
                 .replaceAll("^\\s+", "")
                 .split("\\s");
-        Deque<String> retDeque = new ArrayDeque<>();
+        Deque<Token> retDeque = new ArrayDeque<>();
 
-        for (String token : tokens) {
+        for (String tokenString : tokens) {
+            Token token;
+            if (tokenString.matches("\\d+(\\.\\d+)?")) { // 数字
+                token = new Token(TokenType.NUMBER, tokenString);
+            } else if (tokenString.matches("\\(")) { // 開き括弧
+                token = new Token(TokenType.LEFT_PAREN, tokenString);
+            } else if (tokenString.matches("\\)")) { // 閉じ括弧
+                token = new Token(TokenType.RIGHT_PAREN, tokenString);
+            } else if (operators.containsKey(tokenString)) { // 演算子
+                token = new Token(TokenType.OPERATOR, tokenString);
+            } else { // 未定義
+                token = new Token(TokenType.UNDEFINED, tokenString);
+            }
             retDeque.offerLast(token);
         }
-        retDeque.offerLast("END"); // 終わりを示す END トークンを追加しておく
+        retDeque.offerLast(new Token(TokenType.END, "END")); // 終わりを示す END トークンを追加しておく
         return retDeque;
     }
 
@@ -41,30 +52,31 @@ public class Parser {
      * @return 逆ポーランド記法のキュー
      * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
      */
-    public Deque<String> parse(Deque<String> tokensQueue) throws OperatorUndefinedExeption {
+    public Deque<String> parse(Deque<Token> tokensQueue) throws OperatorUndefinedExeption {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
-        Deque<String> operatorStack = new ArrayDeque<>();
+        Deque<Token> operatorStack = new ArrayDeque<>();
 
         while (!tokensQueue.isEmpty()) {
-            String token = tokensQueue.pollFirst();
+            Token token = tokensQueue.pollFirst();
+            TokenType tokenType = token.getTokenType();
 
             // 最後のトークンの場合
-            if (token.matches("END")) {
+            if (tokenType == TokenType.END) {
                 // 演算子スタックに残っている演算子をキューに出す
                 while (!operatorStack.isEmpty()) {
-                    reversePolishQueue.offerLast(operatorStack.pollFirst());
+                    reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
                 }
             }
 
             // トークンが数字の場合
-            if (token.matches("\\d+(\\.\\d+)?")) {
+            if (tokenType == TokenType.NUMBER) {
                 // キューにそのまま入れる
-                reversePolishQueue.offerLast(token);
+                reversePolishQueue.offerLast(token.getText());
                 continue;
             }
 
             // トークンが開き括弧の場合
-            if (token.matches("\\(")) {
+            if (tokenType == TokenType.LEFT_PAREN) {
                 // 括弧内を再帰的にパースする
                 Deque<String> partialReversePolishQueue = parse(tokensQueue);
                 while (!partialReversePolishQueue.isEmpty()) {
@@ -74,10 +86,10 @@ public class Parser {
             }
 
             // トークンが閉じ括弧の場合
-            if (token.matches("\\)")) {
+            if (tokenType == TokenType.RIGHT_PAREN) {
                 // 演算子スタックに残っている演算子をキューに出す
                 while (!operatorStack.isEmpty()) {
-                    reversePolishQueue.offerLast(operatorStack.pollFirst());
+                    reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
                 }
                 return reversePolishQueue;
             }
@@ -93,17 +105,17 @@ public class Parser {
             // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
             try {
                 // TODO: nullチェック．try-catch はなるべく減らす
-                int currentPriority = this.operators.get(token).getPriority();
-                int stackPriority = this.operators.get(operatorStack.peekFirst()).getPriority();
+                int currentPriority = this.operators.get(token.getText()).getPriority();
+                int stackPriority = this.operators.get(operatorStack.peekFirst().getText()).getPriority();
 
                 if (currentPriority > stackPriority) {
                     operatorStack.offerFirst(token);
                 } else { // そうでない場合はスタックの演算子をキューに出し，現在のトークンをスタックに積む
-                    reversePolishQueue.offerLast(operatorStack.pollFirst());
+                    reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
                     operatorStack.offerFirst(token);
                 }
             } catch (NullPointerException e) {
-                throw new OperatorUndefinedExeption(token);
+                throw new OperatorUndefinedExeption(token.getText());
             }
         }
 

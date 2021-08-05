@@ -29,7 +29,7 @@ public class Calculator {
      */
     public double calculate(String fomulaString) throws OperatorUndefinedExeption, InvalidExpressionException {
         Parser parser = new Parser(operators);
-        Deque<String> tokensQueue = parser.tokenize(fomulaString);
+        Deque<Token> tokensQueue = parser.tokenize(fomulaString);
         Deque<String> reversePolishQueue = parser.parse(tokensQueue);
 
         Deque<String> numberStack = new ArrayDeque<>();
