@@ -1,5 +1,6 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -9,19 +10,28 @@ public class Calculator {
      */
     private Map<String, Operator> operators;
 
-    public Calculator(Map<String, Operator> operators) {
-        this.operators = operators;
+    {
+        operators = new HashMap<>();
+        operators.put("+", new Add(10, 2));
+        operators.put("-", new Subtract(10, 2));
+        operators.put("*", new Multiply(20, 2));
+        operators.put("/", new Divide(20, 2));
+        operators.put("sin", new Sin(30, 1));
     }
 
     /**
-     * 逆ポーランド記法のキューをもとに計算を実行し，結果を返す
+     * 計算式の文字列をもとに計算を実行し，結果を返す
      *
-     * @param reversePolishQueue 逆ポーランド記法のキュー
+     * @param fomulaString 計算式の文字列
      * @return 計算結果
      * @throws OperatorUndefinedExeption  演算子として定義されていないトークンが渡された場合
      * @throws InvalidExpressionException 計算式が不正な場合
      */
-    public double calculate(Deque<String> reversePolishQueue) throws OperatorUndefinedExeption, InvalidExpressionException {
+    public double calculate(String fomulaString) throws OperatorUndefinedExeption, InvalidExpressionException {
+        Parser parser = new Parser(operators);
+        Deque<String> tokensQueue = parser.tokenize(fomulaString);
+        Deque<String> reversePolishQueue = parser.parse(tokensQueue);
+
         Deque<String> numberStack = new ArrayDeque<>();
         double calculationResult;
 
