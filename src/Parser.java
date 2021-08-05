@@ -50,9 +50,8 @@ public class Parser {
      *
      * @param tokensQueue トークン列のキュー
      * @return 逆ポーランド記法のキュー
-     * @throws OperatorUndefinedExeption 演算子として定義されていないトークンが渡された場合
      */
-    public Deque<String> parse(Deque<Token> tokensQueue) throws OperatorUndefinedExeption {
+    public Deque<String> parse(Deque<Token> tokensQueue) {
         Deque<String> reversePolishQueue = new ArrayDeque<>();
         Deque<Token> operatorStack = new ArrayDeque<>();
 
@@ -60,65 +59,64 @@ public class Parser {
             Token token = tokensQueue.pollFirst();
             TokenType tokenType = token.getTokenType();
 
-            // 最後のトークンの場合
-            if (tokenType == TokenType.END) {
-                // 演算子スタックに残っている演算子をキューに出す
-                while (!operatorStack.isEmpty()) {
-                    reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
-                }
-            }
+            switch (tokenType) {
+                case UNDEFINED:
+                    System.out.println("演算子が未定義です");
+                    // とりあえず 0.0 を返しておく
+                    Deque<String> retDeque = new ArrayDeque<>();
+                    retDeque.offerFirst("0.0");
+                    return retDeque;
+                case END:
+                    // 最後のトークンの場合
+                    // 演算子スタックに残っている演算子をキューに出す
+                    while (!operatorStack.isEmpty()) {
+                        reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
+                    }
+                    break;
+                case NUMBER:
+                    // トークンが数字の場合
+                    // キューにそのまま入れる
+                    reversePolishQueue.offerLast(token.getText());
+                    break;
+                case LEFT_PAREN:
+                    // トークンが開き括弧の場合
+                    // 括弧内を再帰的にパースする
+                    Deque<String> partialReversePolishQueue = parse(tokensQueue);
+                    while (!partialReversePolishQueue.isEmpty()) {
+                        reversePolishQueue.offerLast(partialReversePolishQueue.pollFirst());
+                    }
+                    break;
+                case RIGHT_PAREN:
+                    // トークンが閉じ括弧の場合
+                    // 演算子スタックに残っている演算子をキューに出す
+                    while (!operatorStack.isEmpty()) {
+                        reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
+                    }
+                    return reversePolishQueue;
+                case OPERATOR:
+                    // トークンが演算子の場合
+                    // 演算子スタックが空ならスタックに積む
+                    if (operatorStack.isEmpty()) {
+                        operatorStack.offerFirst(token);
+                        continue;
+                    }
 
-            // トークンが数字の場合
-            if (tokenType == TokenType.NUMBER) {
-                // キューにそのまま入れる
-                reversePolishQueue.offerLast(token.getText());
-                continue;
-            }
+                    // 演算子スタックが空でない場合
+                    // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
+                    int currentPriority = this.operators.get(token.getText()).getPriority();
+                    int stackPriority = this.operators.get(operatorStack.peekFirst().getText()).getPriority();
 
-            // トークンが開き括弧の場合
-            if (tokenType == TokenType.LEFT_PAREN) {
-                // 括弧内を再帰的にパースする
-                Deque<String> partialReversePolishQueue = parse(tokensQueue);
-                while (!partialReversePolishQueue.isEmpty()) {
-                    reversePolishQueue.offerLast(partialReversePolishQueue.pollFirst());
-                }
-                continue;
-            }
-
-            // トークンが閉じ括弧の場合
-            if (tokenType == TokenType.RIGHT_PAREN) {
-                // 演算子スタックに残っている演算子をキューに出す
-                while (!operatorStack.isEmpty()) {
-                    reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
-                }
-                return reversePolishQueue;
-            }
-
-            // トークンが演算子の場合
-            // 演算子スタックが空ならスタックに積む
-            if (operatorStack.isEmpty()) {
-                operatorStack.offerFirst(token);
-                continue;
-            }
-
-            // 演算子スタックが空でない場合
-            // 現在のトークンがスタックの演算子より優先度が高いならスタックに積む
-            try {
-                // TODO: nullチェック．try-catch はなるべく減らす
-                int currentPriority = this.operators.get(token.getText()).getPriority();
-                int stackPriority = this.operators.get(operatorStack.peekFirst().getText()).getPriority();
-
-                if (currentPriority > stackPriority) {
-                    operatorStack.offerFirst(token);
-                } else { // そうでない場合はスタックの演算子をキューに出し，現在のトークンをスタックに積む
-                    reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
-                    operatorStack.offerFirst(token);
-                }
-            } catch (NullPointerException e) {
-                throw new OperatorUndefinedExeption(token.getText());
+                    if (currentPriority > stackPriority) {
+                        operatorStack.offerFirst(token);
+                    } else { // 現在のトークンの演算子の優先度が低いか同じ場合，スタックの演算子をキューに出し，現在のトークンをスタックに積む
+                        reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
+                        operatorStack.offerFirst(token);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
-
         return reversePolishQueue;
     }
 }
