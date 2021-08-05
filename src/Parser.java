@@ -51,8 +51,8 @@ public class Parser {
      * @param tokensQueue トークン列のキュー
      * @return 逆ポーランド記法のキュー
      */
-    public Deque<String> parse(Deque<Token> tokensQueue) {
-        Deque<String> reversePolishQueue = new ArrayDeque<>();
+    public Deque<Token> parse(Deque<Token> tokensQueue) {
+        Deque<Token> reversePolishQueue = new ArrayDeque<>();
         Deque<Token> operatorStack = new ArrayDeque<>();
 
         while (!tokensQueue.isEmpty()) {
@@ -63,25 +63,25 @@ public class Parser {
                 case UNDEFINED:
                     System.out.println("演算子が未定義です");
                     // とりあえず 0.0 を返しておく
-                    Deque<String> retDeque = new ArrayDeque<>();
-                    retDeque.offerFirst("0.0");
+                    Deque<Token> retDeque = new ArrayDeque<>();
+                    retDeque.offerFirst(new Token(TokenType.NUMBER, "0.0"));
                     return retDeque;
                 case END:
                     // 最後のトークンの場合
                     // 演算子スタックに残っている演算子をキューに出す
                     while (!operatorStack.isEmpty()) {
-                        reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
+                        reversePolishQueue.offerLast(operatorStack.pollFirst());
                     }
                     break;
                 case NUMBER:
                     // トークンが数字の場合
                     // キューにそのまま入れる
-                    reversePolishQueue.offerLast(token.getText());
+                    reversePolishQueue.offerLast(token);
                     break;
                 case LEFT_PAREN:
                     // トークンが開き括弧の場合
                     // 括弧内を再帰的にパースする
-                    Deque<String> partialReversePolishQueue = parse(tokensQueue);
+                    Deque<Token> partialReversePolishQueue = parse(tokensQueue);
                     while (!partialReversePolishQueue.isEmpty()) {
                         reversePolishQueue.offerLast(partialReversePolishQueue.pollFirst());
                     }
@@ -90,7 +90,7 @@ public class Parser {
                     // トークンが閉じ括弧の場合
                     // 演算子スタックに残っている演算子をキューに出す
                     while (!operatorStack.isEmpty()) {
-                        reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
+                        reversePolishQueue.offerLast(operatorStack.pollFirst());
                     }
                     return reversePolishQueue;
                 case OPERATOR:
@@ -109,7 +109,7 @@ public class Parser {
                     if (currentPriority > stackPriority) {
                         operatorStack.offerFirst(token);
                     } else { // 現在のトークンの演算子の優先度が低いか同じ場合，スタックの演算子をキューに出し，現在のトークンをスタックに積む
-                        reversePolishQueue.offerLast(operatorStack.pollFirst().getText());
+                        reversePolishQueue.offerLast(operatorStack.pollFirst());
                         operatorStack.offerFirst(token);
                     }
                     break;

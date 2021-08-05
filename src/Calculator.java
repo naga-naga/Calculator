@@ -30,17 +30,18 @@ public class Calculator {
     public double calculate(String fomulaString) throws OperatorUndefinedExeption, InvalidExpressionException {
         Parser parser = new Parser(operators);
         Deque<Token> tokensQueue = parser.tokenize(fomulaString);
-        Deque<String> reversePolishQueue = parser.parse(tokensQueue);
+        Deque<Token> reversePolishQueue = parser.parse(tokensQueue);
 
-        Deque<String> numberStack = new ArrayDeque<>();
+        Deque<Token> numberStack = new ArrayDeque<>();
         double calculationResult;
 
         while (!reversePolishQueue.isEmpty()) {
-            String token = reversePolishQueue.pollFirst();
+            Token token = reversePolishQueue.pollFirst();
+            TokenType tokenType = token.getTokenType();
             Deque<Double> operands = new ArrayDeque<>();
 
             // 数字の場合スタックに積む
-            if (token.matches("\\d+(\\.\\d+)?")) {
+            if (tokenType == TokenType.NUMBER) {
                 numberStack.offerFirst(token);
                 continue;
             }
@@ -49,23 +50,23 @@ public class Calculator {
             try {
                 // TODO: nullチェック．try-catch をなるべく減らす
                 // 計算に必要な分だけスタックからオペランドを取り出す
-                int numberOfOperands = this.operators.get(token).getNumberOfOperands();
+                int numberOfOperands = this.operators.get(token.getText()).getNumberOfOperands();
                 for (int i = 0; i < numberOfOperands; i++) {
                     // 左側のオペランドが Deque の左側に来るようにする
-                    operands.offerFirst(Double.parseDouble(numberStack.removeFirst()));
+                    operands.offerFirst(Double.parseDouble(numberStack.removeFirst().getText()));
                 }
 
-                double processingResult = this.operators.get(token).process(operands.toArray(new Double[numberOfOperands]));
-                numberStack.offerFirst(String.valueOf(processingResult));
+                double processingResult = this.operators.get(token.getText()).process(operands.toArray(new Double[numberOfOperands]));
+                numberStack.offerFirst(new Token(TokenType.NUMBER, String.valueOf(processingResult)));
             } catch (NullPointerException e) {
-                throw new OperatorUndefinedExeption(token);
+                throw new OperatorUndefinedExeption(token.getText());
             } catch (NoSuchElementException e) {
                 throw new InvalidExpressionException();
             }
         }
 
         try {
-            calculationResult = Double.parseDouble(numberStack.removeFirst());
+            calculationResult = Double.parseDouble(numberStack.removeFirst().getText());
         } catch (NoSuchElementException e) {
             throw new InvalidExpressionException();
         }
