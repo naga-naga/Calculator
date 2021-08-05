@@ -17,6 +17,10 @@ public class Calculator {
         operators.put("*", new Multiply(20, 2));
         operators.put("/", new Divide(20, 2));
         operators.put("sin", new Sin(30, 1));
+        operators.put("cos", new Cos(30, 1));
+        operators.put("tan", new Tan(30, 1));
+        operators.put("sqrt", new Sqrt(30, 1));
+        operators.put("^", new Power(40, 2));
     }
 
     /**
