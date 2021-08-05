@@ -48,7 +48,7 @@ public class Calculator {
                         // 左側のオペランドが Deque の左側に来るようにする
                         operands.offerFirst(Double.parseDouble(numberStack.removeFirst().getText()));
                     } catch (NoSuchElementException e) {
-                        System.out.println("不正な式です");
+                        System.err.println("不正な式です");
                         return 0.0;
                     }
                 }
@@ -56,7 +56,7 @@ public class Calculator {
                 double processingResult = this.operators.get(token.getText()).process(operands.toArray(new Double[numberOfOperands]));
                 numberStack.offerFirst(new Token(TokenType.NUMBER, String.valueOf(processingResult)));
             } else { // この状態にはならないはず
-                System.out.println("エラー");
+                System.err.println("エラー");
                 return 0.0; // とりあえず 0.0 を返す
             }
         }
@@ -64,7 +64,7 @@ public class Calculator {
         try {
             calculationResult = Double.parseDouble(numberStack.removeFirst().getText());
         } catch (NoSuchElementException e) {
-            System.out.println("不正な式です");
+            System.err.println("不正な式です");
             return 0.0;
         }
 
