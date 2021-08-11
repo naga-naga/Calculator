@@ -61,7 +61,7 @@ public class Parser {
 
             switch (tokenType) {
                 case UNDEFINED:
-                    System.err.println("演算子が未定義です");
+                    System.err.println("演算子 " + token.getText() + " は未定義です");
                     // とりあえず 0.0 を返しておく
                     Deque<Token> retDeque = new ArrayDeque<>();
                     retDeque.offerFirst(new Token(TokenType.NUMBER, "0.0"));
